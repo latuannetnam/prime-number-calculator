@@ -1,1 +1,1 @@
-# primer-number-calculator
+# Scalable prime number calculator based on Akka
