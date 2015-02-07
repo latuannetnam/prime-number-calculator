@@ -12,7 +12,7 @@ public class SingleThreadMain {
     public static void main(String[] args) {
         Logger logger = LogManager.getLogger(SingleThreadMain.class);
         long firstNumber = 1;
-        long lastNumber=100;
+        long lastNumber=10000000;
         long startTime = System.nanoTime();
 
         PrimeNumberEnumrator primeNumberEnumrator = new PrimeNumberEnumrator(firstNumber,lastNumber);
@@ -20,7 +20,7 @@ public class SingleThreadMain {
         long stopTime = System.nanoTime() - startTime;
         logger.debug("prime list calculated for {} mil seconds", stopTime/1000000);
         logger.debug("Total prime numbers from {} to {} are {}", firstNumber, lastNumber, primeNumberEnumrator.getPrimeList().size());
-        logger.debug(StringUtils.join(primeNumberEnumrator.getPrimeList()));
+        //logger.debug(StringUtils.join(primeNumberEnumrator.getPrimeList()));
 
 
 
