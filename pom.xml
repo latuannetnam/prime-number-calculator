@@ -79,6 +79,7 @@
         </dependency>
     </dependencies>
 
+
     <properties>
         <spring.version>4.1.4.RELEASE</spring.version>
         <akka.version>2.3.9</akka.version>
