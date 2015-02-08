@@ -1,18 +1,18 @@
 package com.netnam.prime.actor;
 
-import akka.actor.ActorRef;
-import akka.actor.PoisonPill;
-import akka.actor.Props;
-import akka.actor.UntypedActor;
+import akka.actor.*;
+import akka.routing.Broadcast;
 import akka.routing.FromConfig;
 import com.netnam.prime.Message;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import scala.concurrent.duration.Duration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -30,7 +30,17 @@ public class MasterPrimeCalcActor extends UntypedActor {
     boolean lastTask=false;
     private long firstNumberOfAll;
     private long lastNumberOfAll;
+    long numberPerTask;
     ActorRef router1;
+    Cancellable cancellable;
+    boolean firstTask =false;
+
+    @Override
+    public void preStart() {
+        //create a router
+        router1 =  getContext().actorOf(FromConfig.getInstance().props(Props.create(WorkerPrimeCalcActor.class)),"workerRouter");
+        logger.debug("router 1 created with path {}",router1.path());
+    }
 
     @Override
     public void onReceive(Object message) throws Exception {
@@ -38,35 +48,42 @@ public class MasterPrimeCalcActor extends UntypedActor {
         {
             startTime = System.nanoTime();
             Message.StartPrimeNumberCalculationMsg msg = (Message.StartPrimeNumberCalculationMsg) message;
-
-            long firstNumber = msg.getFirstNumber();
-            long numberOfWorkers =msg.getNumberOfWorkers();
-            long numberPerTask = msg.getNumberPerTask();
             firstNumberOfAll = msg.getFirstNumber();
             lastNumberOfAll = msg.getLastNumber();
+            numberPerTask = msg.getNumberPerTask();
+            //Thread.sleep(2000);
+            logger.debug("begin sending to workers");
+            cancellable = getContext().system().scheduler().schedule( Duration.create(0, TimeUnit.MILLISECONDS),Duration.create(200, TimeUnit.MILLISECONDS),router1,new Broadcast(new Message.PrepareForTask()),getContext().system().dispatcher(),getSelf());
+        }
 
-            //create a router
-            router1 =  getContext().actorOf(FromConfig.getInstance().props(Props.create(WorkerPrimeCalcActor.class)),"router1");
-            logger.debug("router 1 created with path {}",router1.path());
+        else if (message instanceof Message.ReadyForTask)
+        {
+            logger.debug("Receive response from worker {}", getSender().path());
+            cancellable.cancel();
 
-            do {
+            if (!firstTask)
+            {
+                firstTask=true;
+                long firstNumber = firstNumberOfAll;
+
+                do {
                 long lastNumber = firstNumber +numberPerTask;
                 sendCount++;
-                if (lastNumber>=msg.getLastNumber())
+                if (lastNumber>=lastNumberOfAll)
                 {
-                    lastNumber = msg.getLastNumber();
+                    lastNumber = lastNumberOfAll;
                     lastTask=true;
                 }
                 router1.tell(new Message.CalculateChunkMsg(firstNumber,lastNumber),getSelf());
                 firstNumber = lastNumber+1;
-                if (firstNumber>=msg.getLastNumber())
+                if (firstNumber>=lastNumberOfAll)
                 {
                     lastTask=true;
                 }
             } while (lastTask==false);
-
-
+            }
         }
+
         else if (message instanceof Message.DoneCalculateChunkMsg)
         {
             Message.DoneCalculateChunkMsg msg = (Message.DoneCalculateChunkMsg) message;

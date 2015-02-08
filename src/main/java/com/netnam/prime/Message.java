@@ -14,6 +14,7 @@ public interface Message {
         private final long numberOfWorkers;
         private final long numberPerTask;
 
+
         public StartPrimeNumberCalculationMsg(long firstNumber, long lastNumber, long numberOfWorkers, long numberPerTask) {
             this.firstNumber = firstNumber;
             this.lastNumber = lastNumber;
@@ -36,6 +37,8 @@ public interface Message {
         public long getNumberPerTask() {
             return numberPerTask;
         }
+
+
     }
 
     public final class CalculateChunkMsg implements Serializable {
@@ -80,6 +83,8 @@ public interface Message {
         public long getLastNumber() {
             return lastNumber;
         }
-
     }
+
+    public final class PrepareForTask implements Serializable  {}
+    public final class ReadyForTask implements Serializable  {}
 }

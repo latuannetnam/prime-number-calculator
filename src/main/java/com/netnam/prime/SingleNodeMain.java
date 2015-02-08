@@ -18,8 +18,8 @@ public class SingleNodeMain {
     public static void main(String[] args) {
         Logger logger = LogManager.getLogger(SingleNodeMain.class);
         long firstNumber = 1;
-        long lastNumber=10000000;
-        Message.StartPrimeNumberCalculationMsg startPrimeNumberCalculationMsg = new Message.StartPrimeNumberCalculationMsg(firstNumber,lastNumber,10,1000);
+        long lastNumber=1000;
+
 
         Config config = ConfigFactory.load("singlenode");
         final ActorSystem system = ActorSystem.create("MySystem",config);

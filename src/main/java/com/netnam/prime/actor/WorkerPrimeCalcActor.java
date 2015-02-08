@@ -1,6 +1,7 @@
 package com.netnam.prime.actor;
 
 import akka.actor.UntypedActor;
+import akka.routing.Broadcast;
 import com.netnam.prime.Message;
 import com.netnam.prime.utility.PrimeNumberEnumrator;
 import org.apache.logging.log4j.LogManager;
@@ -28,8 +29,15 @@ public class WorkerPrimeCalcActor extends UntypedActor {
             PrimeNumberEnumrator primeNumberEnumrator = new PrimeNumberEnumrator(firstNumber,lastNumber);
             //logger.debug("{} calculating prime from {} to {}",getSelf().path(),firstNumber,lastNumber);
             primeNumberEnumrator.calculatePrimeNumber();
-            getSender().tell(new Message.DoneCalculateChunkMsg(firstNumber,lastNumber,primeNumberEnumrator.getPrimeList()),getSelf());
+            getSender().tell(new Message.DoneCalculateChunkMsg(firstNumber, lastNumber, primeNumberEnumrator.getPrimeList()), getSelf());
         }
+
+        else if (message instanceof Message.PrepareForTask)
+        {
+            logger.debug("Ready to receive task from Master");
+            getSender().tell(new Message.ReadyForTask(),getSelf());
+        }
+
         else {
             unhandled(message);
         }
