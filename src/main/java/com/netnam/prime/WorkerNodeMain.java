@@ -19,11 +19,10 @@ public class WorkerNodeMain {
     public static void main(String[] args) {
         Logger logger = LogManager.getLogger(WorkerNodeMain.class);
 
-
-        Config config = ConfigFactory.load("workernode");
+        final String port = args.length > 0 ? args[0] : "0";
+        final Config config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port).
+                withFallback(ConfigFactory.load("workernode"));
         final ActorSystem system = ActorSystem.create("ClusterSystem",config);
-//        ActorRef workerActor=  system.actorOf(Props.create(WorkerPrimeCalcActor.class),
-//                    "worker");
 
 
 
