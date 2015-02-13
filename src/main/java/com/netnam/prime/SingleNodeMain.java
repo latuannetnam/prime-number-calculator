@@ -18,7 +18,7 @@ public class SingleNodeMain {
     public static void main(String[] args) {
         Logger logger = LogManager.getLogger(SingleNodeMain.class);
         long firstNumber = 1;
-        long lastNumber=1000;
+        long lastNumber=100000000;
 
 
         Config config = ConfigFactory.load("singlenode");

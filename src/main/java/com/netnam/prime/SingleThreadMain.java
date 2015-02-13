@@ -12,7 +12,7 @@ public class SingleThreadMain {
     public static void main(String[] args) {
         Logger logger = LogManager.getLogger(SingleThreadMain.class);
         long firstNumber = 1;
-        long lastNumber=10000000;
+        long lastNumber=100000000;
         long startTime = System.nanoTime();
 
         PrimeNumberEnumrator primeNumberEnumrator = new PrimeNumberEnumrator(firstNumber,lastNumber);

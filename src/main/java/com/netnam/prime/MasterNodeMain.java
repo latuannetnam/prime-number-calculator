@@ -18,7 +18,7 @@ public class MasterNodeMain {
     public static void main(String[] args) {
         final Logger logger = LogManager.getLogger(MasterNodeMain.class);
         final long firstNumber = 1;
-        final long lastNumber=1000000;
+        final long lastNumber=100000000;
 
 
         Config config = ConfigFactory.load("masternode");
