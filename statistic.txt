@@ -1,0 +1,11 @@
+2015-02-11:
+ - Single thread:
+  2015-02-11 11:53:00,665 DEBUG c.n.p.SingleThreadMain [main](21) prime list calculated for 223222 mil seconds
+2015-02-11 11:53:00,668 DEBUG c.n.p.SingleThreadMain [main](22) Total prime numbers from 1 to 100000000 are 5761456
+
+ - Single node: (5 threads)
+prime list calculated for 60230 mil seconds
+2015-02-11 11:55:49,868 DEBUG c.n.p.a.MasterPrimeCalcActor [MySystem-akka.actor.default-dispatcher-2](108) Total prime numbers from 1 to 100000000 are 5761456
+ - Multi node: 2 nodes, 5 instances/node
+2015-02-13 21:44:20,818 DEBUG c.n.p.a.MasterPrimeCalcActor [ClusterSystem-akka.actor.default-dispatcher-17](107) prime list calculated for 34638 mil seconds
+2015-02-13 21:44:20,818 DEBUG c.n.p.a.MasterPrimeCalcActor [ClusterSystem-akka.actor.default-dispatcher-17](108) Total prime numbers from 1 to 100000000 are 5761456

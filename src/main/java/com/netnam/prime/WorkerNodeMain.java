@@ -20,15 +20,18 @@ import org.kohsuke.args4j.ParserProperties;
  */
 public class WorkerNodeMain {
 
+    @Option(name="-f",usage="first number")
+    private long firstNumber = 1;
+    @Option(name="-l",usage="last number")
+    private long lastNumber=1000;
     @Option(name="-h",usage="host IP address")
     private String hostname="127.0.0.1";
+    @Option(name="-p",usage="port address")
+    private Integer port=3551;
+
 
     public static void main(String[] args) {
         new WorkerNodeMain().doMain(args);
-
-
-
-
     }
 
     private void doMain(String[] args) {
@@ -53,7 +56,7 @@ public class WorkerNodeMain {
             return;
         }
         logger.debug("Master host:{}",hostname);
-        final Config config = ConfigFactory.parseString("akka.cluster.seed-nodes=[\"akka.tcp://ClusterSystem@" + hostname + ":3551\"]").
+        final Config config =  ConfigFactory.parseString("akka.cluster.seed-nodes=[\"akka.tcp://ClusterSystem@" + hostname + ":" +port +"\"]").
                 withFallback(ConfigFactory.load("workernode"));
         final ActorSystem system = ActorSystem.create("ClusterSystem",config);
     }

@@ -24,6 +24,9 @@ public class MasterNodeMain {
     private long lastNumber=1000;
     @Option(name="-h",usage="host IP address")
     private String hostname="127.0.0.1";
+    @Option(name="-p",usage="port address")
+    private Integer port=3551;
+
     public static void main(String[] args) {
         new MasterNodeMain().doMain(args);
 
@@ -52,7 +55,8 @@ public class MasterNodeMain {
          }
          logger.debug("Calculating prime numbers from {} to {}", firstNumber, lastNumber);
             Config config = ConfigFactory.parseString("akka.remote.netty.tcp.hostname=" +hostname).
-                    withFallback(ConfigFactory.parseString("akka.cluster.seed-nodes=[\"akka.tcp://ClusterSystem@" + hostname + ":3551\"]")).
+                    withFallback(ConfigFactory.parseString("akka.remote.netty.tcp.port=" +port)).
+                    withFallback(ConfigFactory.parseString("akka.cluster.seed-nodes=[\"akka.tcp://ClusterSystem@" + hostname + ":" +port +"\"]")).
                     withFallback(ConfigFactory.load("masternode"));
             final ActorSystem system = ActorSystem.create("ClusterSystem",config);
             //#registerOnUp
