@@ -6,7 +6,7 @@
 
     <groupId>com.netnam</groupId>
     <artifactId>prime-number-calculator</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <developers>
         <developer>
             <name>Le Anh Tuan</name>
@@ -44,7 +44,7 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
-                                        <Main-Class>com.netnam.prime.SingleNodeMain</Main-Class>
+                                        <Main-Class>com.netnam.prime.Main</Main-Class>
                                     </manifestEntries>
                                 </transformer>
                             </transformers>
