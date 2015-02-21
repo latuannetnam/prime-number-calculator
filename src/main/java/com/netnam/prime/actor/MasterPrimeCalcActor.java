@@ -33,7 +33,7 @@ public class MasterPrimeCalcActor extends UntypedActor {
     long numberPerTask;
     ActorRef router1;
     Cancellable cancellable;
-    boolean firstTask =false;
+    boolean firstTask =true;
 
     @Override
     public void preStart() {
@@ -46,7 +46,7 @@ public class MasterPrimeCalcActor extends UntypedActor {
     public void onReceive(Object message) throws Exception {
         if (message instanceof Message.StartPrimeNumberCalculationMsg)
         {
-            startTime = System.nanoTime();
+
             Message.StartPrimeNumberCalculationMsg msg = (Message.StartPrimeNumberCalculationMsg) message;
             firstNumberOfAll = msg.getFirstNumber();
             lastNumberOfAll = msg.getLastNumber();
@@ -61,9 +61,10 @@ public class MasterPrimeCalcActor extends UntypedActor {
             logger.debug("Receive response from worker {}", getSender().path());
             cancellable.cancel();
 
-            if (!firstTask)
+            if (firstTask)
             {
-                firstTask=true;
+                startTime = System.nanoTime();
+                firstTask=false;
                 long firstNumber = firstNumberOfAll;
 
                 do {
