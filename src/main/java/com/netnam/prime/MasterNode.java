@@ -25,6 +25,7 @@ public class MasterNode {
         this.lastNumber = lastNumber;
         this.hostname = hostname;
         this.port = port;
+        final long segmentNumber=1000000;
         logger.debug("Calculating prime numbers from {} to {}", firstNumber, lastNumber);
         Config config = ConfigFactory.parseString("akka.remote.netty.tcp.hostname=" +hostname).
                 withFallback(ConfigFactory.parseString("akka.remote.netty.tcp.port=" +port)).
@@ -40,7 +41,7 @@ public class MasterNode {
                 ActorRef primeListCalActor=  system.actorOf(Props.create(MasterPrimeCalcActor.class),
                         "master");
                 logger.debug("master created {}",primeListCalActor.path());
-                primeListCalActor.tell(new Message.StartPrimeNumberCalculationMsg(firstNumber,lastNumber,10,1000),null);
+                primeListCalActor.tell(new Message.StartPrimeNumberCalculationMsg(firstNumber,lastNumber,10,segmentNumber),null);
 
             }
         });
