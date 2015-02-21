@@ -20,12 +20,14 @@ public class SingleNode {
     public SingleNode(long firstNumber, long lastNumber) {
         this.firstNumber = firstNumber;
         this.lastNumber = lastNumber;
+        long segmentNumber=1000000;
         logger.debug("Calculating prime numbers from {} to {}", firstNumber, lastNumber);
         Config config = ConfigFactory.load("singlenode");
         final ActorSystem system = ActorSystem.create("MySystem",config);
         ActorRef primeListCalActor=  system.actorOf(Props.create(MasterPrimeCalcActor.class),
                 "master");
-        primeListCalActor.tell(new Message.StartPrimeNumberCalculationMsg(firstNumber,lastNumber,10,1000),null);
+        if ((lastNumber-firstNumber)<segmentNumber)  segmentNumber = lastNumber-firstNumber;
+        primeListCalActor.tell(new Message.StartPrimeNumberCalculationMsg(firstNumber,lastNumber,10,segmentNumber),null);
     }
 
 

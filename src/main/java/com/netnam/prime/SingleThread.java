@@ -1,6 +1,6 @@
 package com.netnam.prime;
 
-import com.netnam.prime.utility.PrimeNumberEnumrator;
+import com.netnam.prime.utility.PrimeNumberGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,11 +20,11 @@ public class SingleThread {
         logger.debug("Calculating prime numbers from {} to {}", firstNumber, lastNumber);
         long startTime = System.nanoTime();
 
-        PrimeNumberEnumrator primeNumberEnumrator = new PrimeNumberEnumrator(firstNumber,lastNumber);
-        primeNumberEnumrator.calculatePrimeNumber();
+        PrimeNumberGenerator primeNumberGenerator = new PrimeNumberGenerator(firstNumber,lastNumber);
+        primeNumberGenerator.calculatePrimeNumber();
         long stopTime = System.nanoTime() - startTime;
         logger.debug("prime list calculated for {} mil seconds", stopTime/1000000);
-        logger.debug("Total prime numbers from {} to {} are {}", firstNumber, lastNumber, primeNumberEnumrator.getPrimeList().size());
+        logger.debug("Total prime numbers from {} to {} are {}", firstNumber, lastNumber, primeNumberGenerator.getPrimeList().size());
         //logger.debug(StringUtils.join(primeNumberEnumrator.getPrimeList()));
     }
 
