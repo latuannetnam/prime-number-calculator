@@ -15,6 +15,7 @@ public interface Message {
         private final long numberPerTask;
 
 
+
         public StartPrimeNumberCalculationMsg(long firstNumber, long lastNumber, long numberOfWorkers, long numberPerTask) {
             this.firstNumber = firstNumber;
             this.lastNumber = lastNumber;
@@ -64,12 +65,13 @@ public interface Message {
         private final long firstNumber;
         private final long lastNumber;
         private final List<Long> primeList;
+        private final long primeCount;
 
-
-        public DoneCalculateChunkMsg(long firstNumber, long lastNumber, List<Long> primeList) {
+        public DoneCalculateChunkMsg(long firstNumber, long lastNumber, List<Long> primeList, long primeCount) {
             this.firstNumber = firstNumber;
             this.lastNumber = lastNumber;
             this.primeList = primeList;
+            this.primeCount = primeCount;
         }
 
         public long getFirstNumber() {
@@ -82,6 +84,10 @@ public interface Message {
 
         public long getLastNumber() {
             return lastNumber;
+        }
+
+        public long getPrimeCount() {
+            return primeCount;
         }
     }
 

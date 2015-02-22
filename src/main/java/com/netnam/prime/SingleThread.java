@@ -19,12 +19,10 @@ public class SingleThread {
         this.lastNumber = lastNumber;
         logger.debug("Calculating prime numbers from {} to {}", firstNumber, lastNumber);
         long startTime = System.nanoTime();
-
         PrimeNumberGenerator primeNumberGenerator = new PrimeNumberGenerator(firstNumber,lastNumber);
-        primeNumberGenerator.calculatePrimeNumber();
         long stopTime = System.nanoTime() - startTime;
         logger.debug("prime list calculated for {} mil seconds", stopTime/1000000);
-        logger.debug("Total prime numbers from {} to {} are {}", firstNumber, lastNumber, primeNumberGenerator.getPrimeList().size());
+        logger.debug("Total prime numbers from {} to {} are {}", firstNumber, lastNumber, primeNumberGenerator.primeCount());
         //logger.debug(StringUtils.join(primeNumberEnumrator.getPrimeList()));
     }
 

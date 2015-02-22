@@ -11,15 +11,15 @@ public class PrimeNumberGenerator {
     private long firstNumber;
     private long lastNumber;
     private List<Long> primeList;
+    private SegementedEratos segmentedPrimeSieve;
 
-    public List<Long> getPrimeList() {
-        return primeList;
-    }
+
 
     public PrimeNumberGenerator(long firstNumber, long lastNumber) {
         this.firstNumber = firstNumber;
         this.lastNumber = lastNumber;
         primeList = new ArrayList<Long>();
+        segmentedPrimeSieve= new SegementedEratos(firstNumber,lastNumber);
     }
     public void calculatePrimeNumberSimpleLoop()
     {
@@ -27,7 +27,7 @@ public class PrimeNumberGenerator {
         {
             if (isPrime(i))
             {
-                primeList.add(new Long(i));
+                primeList.add(i);
             }
         }
     }
@@ -47,9 +47,13 @@ public class PrimeNumberGenerator {
         return true;
     }
 
-    public void calculatePrimeNumber() {
-        SegementedEratos segmentedPrimeSieve = new SegementedEratos(firstNumber,lastNumber);
-        segmentedPrimeSieve.fillSegmentPrime();
+    public long primeCount()
+    {
+        return segmentedPrimeSieve.primeCount();
+    }
+
+    public List<Long> getPrimeList() {
         primeList = segmentedPrimeSieve.getPrimes();
+        return primeList;
     }
 }

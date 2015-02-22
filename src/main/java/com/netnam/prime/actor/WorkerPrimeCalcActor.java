@@ -6,6 +6,8 @@ import com.netnam.prime.utility.PrimeNumberGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+
 /**
  * Created by Le Anh Tuan on 07/02/2015.
  */
@@ -26,9 +28,11 @@ public class WorkerPrimeCalcActor extends UntypedActor {
             long firstNumber = msg.getFirstNumber();
             long lastNumber = msg.getLastNumber();
             PrimeNumberGenerator primeNumberGenerator = new PrimeNumberGenerator(firstNumber,lastNumber);
-            //logger.debug("{} calculating prime from {} to {}",getSelf().path(),firstNumber,lastNumber);
-            primeNumberGenerator.calculatePrimeNumber();
-            getSender().tell(new Message.DoneCalculateChunkMsg(firstNumber, lastNumber, primeNumberGenerator.getPrimeList()), getSelf());
+            long primeCount = primeNumberGenerator.primeCount();
+            //Todo write get prime list code here
+            //getSender().tell(new Message.DoneCalculateChunkMsg(firstNumber, lastNumber, primeNumberGenerator.getPrimeList(),primeCount), getSelf());
+            getSender().tell(new Message.DoneCalculateChunkMsg(firstNumber, lastNumber, new ArrayList<Long>(),primeCount), getSelf());
+
         }
 
         else if (message instanceof Message.PrepareForTask)

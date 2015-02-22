@@ -1,5 +1,6 @@
 package com.netnam.prime.utility;
 
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -22,10 +23,20 @@ public class SegementedEratos {
     private final long firstNumber;
     private final long lastNumber;
     private List<Long> primes = new ArrayList<Long>();
+    private BitSet sieve;
+
 
     public SegementedEratos(long firstNumber, long lastNumber) {
         this.firstNumber = firstNumber;
         this.lastNumber = lastNumber;
+        if (firstNumber==1L)
+        {
+            sieve = computePrimes((int) lastNumber);
+        }
+        else
+        {
+            sieve = computePrimes(firstNumber,lastNumber);
+        }
     }
 
     private BitSet computePrimes(int limit)
@@ -92,43 +103,47 @@ public class SegementedEratos {
         return segment;
     }
 
-    public void fillPrime()
-    {
-        BitSet primeSet = computePrimes((int) lastNumber);
-        for (int i = primeSet.nextSetBit(0); i != -1; i = primeSet.nextSetBit(i + 1))
-        {
-           primes.add(new Long(i));
 
-        }
+
+    public long primeCount()
+    {
+        return sieve.cardinality();
     }
 
-    public void fillSegmentPrime()
-    {
-        BitSet primeSet = computePrimes(firstNumber, lastNumber);
-        for (int i = primeSet.nextSetBit(0); i != -1; i = primeSet.nextSetBit(i + 1)) {
 
-            primes.add(firstNumber+i);
-        }
-    }
+
 
     public List<Long> getPrimes() {
+        for (int i = sieve.nextSetBit(0); i != -1; i = sieve.nextSetBit(i + 1))
+        {
+            if (firstNumber==1L)
+                primes.add(new Long(i));
+            else
+                primes.add(firstNumber+i);
+
+        }
         return primes;
     }
 
+    public BitSet getSieve() {
+        return sieve;
+    }
+
     public static void main(String[] args) {
-        long f = 70000000;
+        long f = 1;
         //long l = 20;
-        long l = 100000000;
+        long l = 1000000000;
         long strt = System.nanoTime();
         SegementedEratos segementedEratos = new SegementedEratos(f,l);
-        segementedEratos.fillSegmentPrime();
+        //segementedEratos.fillPrime();
         //segementedEratos.fillPrime();
 
         long elpsd = System.nanoTime() - strt;
         System.out.println();
-        System.out.println("Found " + segementedEratos.primes.size() + " primes up from " + f + " to " + l + " in " + elpsd / 1000000 + " milliseconds.");
+        System.out.println("Found " + segementedEratos.primeCount() + " primes up from " + f + " to " + l + " in " + elpsd / 1000000 + " milliseconds.");
         if ((l - f) <= 100) {
-            System.out.print(StringUtils.join(segementedEratos.primes));
+
+            System.out.print(StringUtils.join(segementedEratos.getPrimes()));
         }
     }
 
