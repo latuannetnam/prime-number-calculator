@@ -1,10 +1,12 @@
 package com.netnam.prime.utility;
 
 
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.util.LongBitSet;
 
 import java.util.ArrayList;
-import java.util.BitSet;
+
 import java.util.List;
 
 /**
@@ -23,7 +25,7 @@ public class SegementedEratos {
     private final long firstNumber;
     private final long lastNumber;
     private List<Long> primes = new ArrayList<Long>();
-    private BitSet sieve;
+    private LongBitSet sieve;
 
 
     public SegementedEratos(long firstNumber, long lastNumber) {
@@ -31,7 +33,7 @@ public class SegementedEratos {
         this.lastNumber = lastNumber;
         if (firstNumber==1L)
         {
-            sieve = computePrimes((int) lastNumber);
+            sieve = computePrimes(lastNumber);
         }
         else
         {
@@ -39,17 +41,15 @@ public class SegementedEratos {
         }
     }
 
-    private BitSet computePrimes(int limit)
+    private LongBitSet computePrimes(long limit)
     {
-        final BitSet primes = new BitSet();
-        primes.set(0, false);
-        primes.set(1, false);
-        primes.set(2, limit, true);
-        for (int d = 2; d < (int) Math.floor(Math.sqrt(limit)); d++)
+        final LongBitSet primes = new LongBitSet(limit);
+        primes.set(2, limit);
+        for (long d = 2; d <  Math.floor(Math.sqrt(limit)); d++)
         {
             if (primes.get(d))
             {
-                for (int m = d * d; m < limit; m += d)
+                for (long m = d * d; m < limit; m += d)
                 {
                     primes.clear(m);
                 }
@@ -68,35 +68,37 @@ public class SegementedEratos {
      *     Each bit in this set is set to true if and only if
      *     the corresponding integer is prime.
      */
-    private BitSet computePrimes(long start, long limit)
+    private LongBitSet computePrimes(long start, long limit)
     {
-        if (limit - start > Integer.MAX_VALUE)
+        if (limit - start > Long.MAX_VALUE)
         {
             throw new IllegalArgumentException();
         }
 
-        final long sqrtLimit = (int) Math.floor(Math.sqrt(limit));
-        final BitSet primes = computePrimes((int) sqrtLimit);
+        final long sqrtLimit = (long) Math.floor(Math.sqrt(limit));
+        final LongBitSet primes = computePrimes((long) sqrtLimit);
 
-        final BitSet segment = new BitSet();
+        final LongBitSet segment = new LongBitSet(limit-start+1);
         if (0 - start >= 0)
         {
-            segment.set((int) (0 - start), false);
+            //segment.set((int) (0 - start), false);
+            segment.clear( (0 - start));
         }
         if (1 - start >= 0)
         {
-            segment.set((int) (1 - start), false);
+            //segment.set((int) (1 - start), false);
+            segment.clear( (1 - start));
         }
-        segment.set((int) (Math.max(0, 2 - start)), (int) (limit - start), true);
-        for (int d = 2; d < sqrtLimit; d++)
+        segment.set( (Math.max(0, 2 - start)),  (limit - start));
+        for (long d = 2; d < sqrtLimit; d++)
         {
             if (primes.get(d))
             {
-                final int remainder = (int) (start % d);
+                final long remainder = (long) (start % d);
                 final long mStart = start - remainder + (remainder == 0 ? 0 : d);
                 for (long m = Math.max(mStart, d * d); m < limit; m += d)
                 {
-                    segment.clear((int) (m - start));
+                    segment.clear( (m - start));
                 }
             }
         }
@@ -114,10 +116,10 @@ public class SegementedEratos {
 
 
     public List<Long> getPrimes() {
-        for (int i = sieve.nextSetBit(0); i != -1; i = sieve.nextSetBit(i + 1))
+        for (long i = sieve.nextSetBit(0); i != -1; i = sieve.nextSetBit(i + 1))
         {
             if (firstNumber==1L)
-                primes.add(new Long(i));
+                primes.add(i);
             else
                 primes.add(firstNumber+i);
 
@@ -125,14 +127,14 @@ public class SegementedEratos {
         return primes;
     }
 
-    public BitSet getSieve() {
+    public LongBitSet getSieve() {
         return sieve;
     }
 
     public static void main(String[] args) {
-        long f = 1;
+        long f = 1L;
         //long l = 20;
-        long l = 1000000000;
+        long l = 100;
         long strt = System.nanoTime();
         SegementedEratos segementedEratos = new SegementedEratos(f,l);
         //segementedEratos.fillPrime();
