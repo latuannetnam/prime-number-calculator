@@ -17,6 +17,9 @@ public class WorkerPrimeCalcActor extends UntypedActor {
     @Override
     public void preStart() {
         logger.debug("worker created with path {}",getSelf().path());
+//        logger.debug("parent path {}",getContext().parent().path());
+//        logger.debug("sender path {}",getSender().path());
+//        getContext().parent().tell(new Message.ReadyForTask(),getSelf());
     }
 
     @Override
@@ -32,12 +35,13 @@ public class WorkerPrimeCalcActor extends UntypedActor {
             //Todo write get prime list code here
             //getSender().tell(new Message.DoneCalculateChunkMsg(firstNumber, lastNumber, primeNumberGenerator.getPrimeList(),primeCount), getSelf());
             getSender().tell(new Message.DoneCalculateChunkMsg(firstNumber, lastNumber, new ArrayList<Long>(),primeCount), getSelf());
+            getSender().tell(new Message.ReadyForTask(),getSelf());
 
         }
 
         else if (message instanceof Message.PrepareForTask)
         {
-            logger.debug("Ready to receive task from Master");
+//            logger.debug("Ready to receive task from Master");
             getSender().tell(new Message.ReadyForTask(),getSelf());
         }
 

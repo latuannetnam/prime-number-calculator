@@ -22,7 +22,8 @@ public class Main {
     private Integer port=3551;
     @Option(name="-m",usage="Run mode: s (single thread); t (multithread); m (master node); w (worker node)")
     private String mode="s";
-
+    @Option(name="-s",usage="Segment size")
+    private long segmentNumber=1000000;
 
     @Option(name="-h", usage = "Help")
     private boolean help;
@@ -75,7 +76,7 @@ public class Main {
         }
         else if (mode.equals("m"))
         {
-            new MasterNode(firstNumber,lastNumber,hostname,port);
+            new MasterNode(firstNumber,lastNumber,hostname,port,segmentNumber);
         }
         else if (mode.equals("w"))
         {

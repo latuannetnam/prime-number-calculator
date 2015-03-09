@@ -19,13 +19,15 @@ public class MasterNode {
     private final long lastNumber;
     private final String hostname;
     private final Integer port;
+    private final  long segmentNumber;
 
-    public MasterNode(final long firstNumber, final long lastNumber, String hostname, Integer port) {
+    public MasterNode(final long firstNumber, final long lastNumber, String hostname, Integer port, final long segmentNumber) {
         this.firstNumber = firstNumber;
         this.lastNumber = lastNumber;
         this.hostname = hostname;
         this.port = port;
-        final long segmentNumber=1000000;
+        this.segmentNumber = segmentNumber;
+
         logger.debug("Calculating prime numbers from {} to {}", firstNumber, lastNumber);
         Config config = ConfigFactory.parseString("akka.remote.netty.tcp.hostname=" +hostname).
                 withFallback(ConfigFactory.parseString("akka.remote.netty.tcp.port=" +port)).
