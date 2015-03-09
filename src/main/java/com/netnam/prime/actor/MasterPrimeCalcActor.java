@@ -3,6 +3,7 @@ package com.netnam.prime.actor;
 import akka.actor.*;
 import akka.routing.*;
 import com.netnam.prime.Message;
+import com.netnam.prime.utility.MapUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import scala.concurrent.duration.Duration;
@@ -55,22 +56,59 @@ public class MasterPrimeCalcActor extends UntypedActor {
             firstNumber = firstNumberOfAll;
             //Thread.sleep(2000);
             logger.debug("begin sending to workers");
-            router1.tell(GetRoutees.getInstance(),getSelf());
-            cancellable = getContext().system().scheduler().schedule(Duration.create(0, TimeUnit.MILLISECONDS), Duration.create(200, TimeUnit.MILLISECONDS), router1, new Broadcast(new Message.PrepareForTask()), getContext().system().dispatcher(), getSelf());
+            router1.tell(GetRoutees.getInstance(), getSelf());
+            //cancellable = getContext().system().scheduler().schedule(Duration.create(0, TimeUnit.MILLISECONDS), Duration.create(200, TimeUnit.MILLISECONDS), router1, new Broadcast(new Message.PrepareForTask()), getContext().system().dispatcher(), getSelf());
 
-        }
-        else if (message instanceof Routees)
-        {
+        } else if (message instanceof Routees) {
             List<Routee> routees = ((Routees) message).getRoutees();
             logger.debug("Routees list {}", routees.size());
-        }
-        else if (message instanceof Message.ReadyForTask) {
-            //logger.debug("Receive response from worker {}", getSender().path());
-            cancellable.cancel();
+        } else if (message instanceof Message.ReadyForTask) {
+           logger.debug("Receive response from worker {}", getSender().path());
+            //cancellable.cancel();
+            delegateTask(getSender());
 
-            if (firstTask) {
-                startTime = System.nanoTime();
-                firstTask = false;
+
+
+
+        } else if (message instanceof Message.DoneCalculateChunkMsg) {
+            Message.DoneCalculateChunkMsg msg = (Message.DoneCalculateChunkMsg) message;
+            primeCount += msg.getPrimeCount();
+            primeList.addAll(msg.getPrimeList());
+            receiveCount++;
+            String workerName = getSender().path().name();
+            Long count = workers.get(workerName);
+            if (count == null) {
+                count = 1L;
+            } else {
+                count++;
+            }
+            workers.put(workerName, count);
+
+            if (receiveCount == sendCount && lastTask) {
+                stopTime = System.nanoTime() - startTime;
+                logger.debug("prime list calculated for {} mil seconds", stopTime / 1000000);
+                logger.debug("Total prime numbers from {} to {} are {}", firstNumberOfAll, lastNumberOfAll, primeCount);
+                workers = MapUtil.sortByValue(workers);
+                for (String worker : workers.keySet()) {
+                    logger.debug("{}:{}", worker, workers.get(worker));
+                }
+
+//                router1.tell(PoisonPill.getInstance(), getSelf());
+//                getSelf().tell(PoisonPill.getInstance(), null);
+            } else {
+              //  router1.tell(new Broadcast(new Message.PrepareForTask()), getSelf());
+                delegateTask(getSender());
+            }
+
+        } else {
+            unhandled(message);
+        }
+    }
+
+    private void delegateTask(ActorRef sender) {
+        if (firstTask) {
+            startTime = System.nanoTime();
+            firstTask = false;
 //                do {
 //                    long lastNumber = firstNumber + numberPerTask;
 //                    sendCount++;
@@ -84,58 +122,23 @@ public class MasterPrimeCalcActor extends UntypedActor {
 //                        lastTask = true;
 //                    }
 //                } while (!lastTask);
-            }
-            if (lastTask) {
-                //logger.debug("Done calculation. Not send task anymore");
-                return;
-            }
+        }
+        if (lastTask) {
+            //logger.debug("Done calculation. Not send task anymore");
+            return;
+        }
 
-            long lastNumber = firstNumber + numberPerTask;
-            sendCount++;
-            if (lastNumber >= lastNumberOfAll) {
-                lastNumber = lastNumberOfAll;
-                lastTask = true;
+        long lastNumber = firstNumber + numberPerTask;
+        sendCount++;
+        if (lastNumber >= lastNumberOfAll) {
+            lastNumber = lastNumberOfAll;
+            lastTask = true;
 
-            }
-            getSender().tell(new Message.CalculateChunkMsg(firstNumber, lastNumber), getSelf());
-            firstNumber = lastNumber + 1;
-            if (firstNumber >= lastNumberOfAll) {
-                lastTask = true;
-            }
-
-
-        } else if (message instanceof Message.DoneCalculateChunkMsg) {
-            Message.DoneCalculateChunkMsg msg = (Message.DoneCalculateChunkMsg) message;
-            primeCount += msg.getPrimeCount();
-            primeList.addAll(msg.getPrimeList());
-            receiveCount++;
-            String workerName = getSender().path().toString();
-            Long count = workers.get(workerName);
-            if (count == null) {
-                count = 1L;
-            } else {
-                count++;
-            }
-            workers.put(workerName, count);
-
-            if (receiveCount == sendCount && lastTask) {
-                stopTime = System.nanoTime() - startTime;
-                logger.debug("prime list calculated for {} mil seconds", stopTime / 1000000);
-                logger.debug("Total prime numbers from {} to {} are {}", firstNumberOfAll, lastNumberOfAll, primeCount);
-                for (String worker : workers.keySet()) {
-                    logger.debug("{}:{}", worker, workers.get(worker));
-                }
-
-                router1.tell(PoisonPill.getInstance(), getSelf());
-                getSelf().tell(PoisonPill.getInstance(), null);
-            }
-            else
-            {
-                router1.tell(new Broadcast(new Message.PrepareForTask()),getSelf());
-            }
-
-        } else {
-            unhandled(message);
+        }
+        sender.tell(new Message.CalculateChunkMsg(firstNumber, lastNumber), getSelf());
+        firstNumber = lastNumber + 1;
+        if (firstNumber >= lastNumberOfAll) {
+            lastTask = true;
         }
     }
 }

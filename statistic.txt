@@ -13,3 +13,11 @@ prime list calculated for 60230 mil seconds
 Found 5761455 primes up to 100000000 in 1754 milliseconds.
 
 Found 5761455 primes up to 100000000 in 12616 milliseconds.
+
+2015-03-09 Cluster 2 nodes
+2015-03-09 18:32:43,015 DEBUG c.n.p.a.MasterPrimeCalcActor [ClusterSystem-akka.actor.default-dispatcher-16](88) prime list calculated for 13863 mil seconds
+2015-03-09 18:32:43,016 DEBUG c.n.p.a.MasterPrimeCalcActor [ClusterSystem-akka.actor.default-dispatcher-16](89) Total prime numbers from 1 to 10000000000 are 455052596
+
+2015-03-09 Multi-thread, 5 threads
+2015-03-09 16:34:31,810 DEBUG c.n.p.a.MasterPrimeCalcActor [MySystem-akka.actor.default-dispatcher-25](123)  prime list calculated for 13712 mil seconds
+2015-03-09 16:34:31,811 DEBUG c.n.p.a.MasterPrimeCalcActor [MySystem-akka.actor.default-dispatcher-25](124) Total prime numbers from 1 to 10000000000 are 455053359
